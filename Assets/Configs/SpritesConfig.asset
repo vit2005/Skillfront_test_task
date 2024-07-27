@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b007b0ff3d2b9458a7dcfc65478dd7, type: 3}
+  m_Name: SpritesConfig
+  m_EditorClassIdentifier: 
+  list:
+  - sprite: {fileID: 21300000, guid: 0fdf0751217004ceabe254a16d9e5ec6, type: 3}
+    indexes: 0000000000000000
+  - sprite: {fileID: 21300000, guid: befc7f58dbbb841d7a32daa73a12e1d8, type: 3}
+    indexes: 0100000000000000
+  - sprite: {fileID: 21300000, guid: 804d6c4634dda442fba9328c248bdbf9, type: 3}
+    indexes: 0100000001000000
+  - sprite: {fileID: 21300000, guid: b7a91f00d80034fbd9683bac1cc47448, type: 3}
+    indexes: 0200000000000000
+  - sprite: {fileID: 21300000, guid: 2b0185ff64be748ac86239aa65176fe1, type: 3}
+    indexes: 0200000001000000
+  - sprite: {fileID: 21300000, guid: f70ac5e772eb34272844ca73cf20ace0, type: 3}
+    indexes: 0200000002000000
+  - sprite: {fileID: 21300000, guid: 3fcd9a60f8e38461e9f3a421015d7975, type: 3}
+    indexes: 0300000000000000
+  - sprite: {fileID: 21300000, guid: 2a79a46483ec54f8d99e0f99c641bc44, type: 3}
+    indexes: 0300000001000000
+  - sprite: {fileID: 21300000, guid: bddc1f89a892b4d30a2b3e0d1c739f18, type: 3}
+    indexes: 0300000002000000
+  - sprite: {fileID: 21300000, guid: 441aff16d5ea549e0915802bc33670a7, type: 3}
+    indexes: 0300000003000000
+  - sprite: {fileID: 21300000, guid: d1565a910e3f14b07a8fbd11714980ee, type: 3}
+    indexes: 0400000000000000
+  - sprite: {fileID: 21300000, guid: 92626b16eca9b48828d8a7a9cfafd66b, type: 3}
+    indexes: 0400000001000000
+  - sprite: {fileID: 21300000, guid: 755ec225a3d3c400a9da5ebc4777a264, type: 3}
+    indexes: 0400000002000000
+  - sprite: {fileID: 21300000, guid: c933bc19bfdd940ab915b7758fa67729, type: 3}
+    indexes: 0400000003000000
+  - sprite: {fileID: 21300000, guid: cf74db74588b447ca9aa01ee3833dc2c, type: 3}
+    indexes: 0400000004000000
+  - sprite: {fileID: 21300000, guid: ad8810339f6a843feaeffd2a30dae8f7, type: 3}
+    indexes: 0500000000000000
+  - sprite: {fileID: 21300000, guid: c5b1d1ce0fe254f91900b1b502fe91fe, type: 3}
+    indexes: 0500000001000000
+  - sprite: {fileID: 21300000, guid: 50ae708f376194c40a8679bda8b78c0f, type: 3}
+    indexes: 0500000002000000
+  - sprite: {fileID: 21300000, guid: 9eaae398252be47e6b00956383fd6638, type: 3}
+    indexes: 0500000003000000
+  - sprite: {fileID: 21300000, guid: 9044c13d6c8f34c8ab42640cce11f829, type: 3}
+    indexes: 0500000004000000
+  - sprite: {fileID: 21300000, guid: 503b6a1b8b88a4769a6dc0ec041fad7a, type: 3}
+    indexes: 0500000005000000
+  - sprite: {fileID: 21300000, guid: c4319a1c1abad4366ab83cb6a1113881, type: 3}
+    indexes: 0600000000000000
+  - sprite: {fileID: 21300000, guid: ff583054942d34d22b6a991168946295, type: 3}
+    indexes: 0600000001000000
+  - sprite: {fileID: 21300000, guid: 358ea2472b22a42d9a9871c7a81057e9, type: 3}
+    indexes: 0600000002000000
+  - sprite: {fileID: 21300000, guid: 7b244525fb220429687c31dfe264f0b3, type: 3}
+    indexes: 0600000003000000
+  - sprite: {fileID: 21300000, guid: 8afef03f633cf40db88949f6c2fad3fc, type: 3}
+    indexes: 0600000004000000
+  - sprite: {fileID: 21300000, guid: e96309715a5e74b21a7c427bd8ba872f, type: 3}
+    indexes: 0600000005000000
+  - sprite: {fileID: 21300000, guid: 6dc74ff88bd0d41bdb73933c237eae70, type: 3}
+    indexes: 0600000006000000
