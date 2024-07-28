@@ -2,39 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Unit : MonoBehaviour
 {
     [SerializeField] private SpritesConfig spritesConfig;
     [SerializeField] private Image image;
-    [SerializeField] private Transform forwardParalelPosition;
-    [SerializeField] private Transform forwardPerpendicularPosition;
-    [SerializeField] private Transform leftParalelPosition;
-    [SerializeField] private Transform rightParalelPosition;
-    [SerializeField] private Transform leftTurnParalelPosition;
-    [SerializeField] private Transform leftTurnPerpendicularPosition;
-    [SerializeField] private Transform rightTurnParalelPosition;
-    [SerializeField] private Transform rightTurnPerpendicularPosition;
+    [SerializeField] private Transform forwardPoint;
+    [SerializeField] private Transform middlePoint;
+    [SerializeField] private float nextDominoParalelOffset;
+    [SerializeField] private float nextDominoPerpendicularOffset;
 
     public bool isThisPerpendicular = false;
+    public bool isThisFlipped = false;
+    public bool isTurned = false;
     public int[] dots;
 
+    public Image Image => image;
 
+    // Sets the domino to display the correct dots and sprite
     public void SetDomino(int[] dots)
     {
-        RotateIfDouble(dots[0] == dots[1]);
         SetFlippedSprite(dots);
         this.dots = dots;
         gameObject.name += $" [{dots[0]},{dots[1]}]";
     }
 
-    private void RotateIfDouble(bool isDouble)
+    // Rotates the domino by 90 degrees if it is a double
+    public void RotateIfDouble(bool isDouble)
     {
         isThisPerpendicular = isDouble;
-        transform.eulerAngles = isDouble ? new Vector3(0, 0, 90) : Vector3.zero;
+        image.transform.eulerAngles = isDouble ? new Vector3(0, 0, 90) : Vector3.zero;
     }
 
+    // Sets the sprite based on the dots, flipping it if necessary
     private void SetFlippedSprite(int[] dots)
     {
         SpriteConfig single = spritesConfig.List.FirstOrDefault(x => x.indexes[0] == dots[0] && x.indexes[1] == dots[1]);
@@ -45,39 +47,47 @@ public class Unit : MonoBehaviour
             return;
         }
 
+        // Flip the sprite if no direct match is found
         single = spritesConfig.List.FirstOrDefault(x => x.indexes[0] == dots[1] && x.indexes[1] == dots[0]);
         image.sprite = single.sprite;
         image.transform.localScale = new Vector3(1, -1, 1);
     }
 
+    // Flips the domino upside down
     public void Flip()
     {
-        float sign = image.transform.localScale.y;
-        sign *= -1;
-        image.transform.localScale = new Vector3(1, sign, 1);
-        if (isThisPerpendicular)
-        {
-            Vector3 rotation = transform.eulerAngles;
-            rotation.z += 180f;
-            transform.eulerAngles = rotation;
-        }
+        // Flip the y-axis of the image
+        image.transform.localScale = new Vector3(1, -image.transform.localScale.y, 1);
+
+        // Reverse the direction of the transform's 'up' vector
+        transform.up = -transform.up;
+
+        isThisFlipped = true;
     }
 
-    public Transform GetParentTransform(bool isParalel = true, bool? isLeftTurn = null, bool isBackward = false)
+    // Calculates the position for the next domino, considering the direction and offset
+    public Vector3 GetNextDominoPosition(out Vector3 direction, bool isParalel = true, bool? isLeftTurn = null, bool isBackward = false)
     {
-        if (isParalel)
+        // Determine the offset based on whether the domino is placed parallel or perpendicular
+        float offset = isParalel ? nextDominoParalelOffset : nextDominoPerpendicularOffset;
+        if (isLeftTurn.HasValue && (!isParalel || isThisPerpendicular)) offset += nextDominoParalelOffset - nextDominoPerpendicularOffset;
+        // Choose the point to base the positioning on
+        Transform point = isThisPerpendicular ? middlePoint : forwardPoint;
+        direction = Vector3.zero;
+
+        // Determine the direction based on turn and flip states
+        if (isLeftTurn.HasValue)
         {
-            if (isLeftTurn.HasValue) 
-                return isLeftTurn.Value ? rightTurnParalelPosition : leftTurnParalelPosition;
-            if (isThisPerpendicular)
-                return isBackward ? leftParalelPosition : rightParalelPosition;
-            
-            return forwardParalelPosition;
+            //direction = isLeftTurn.Value ? -transform.right : transform.right;
+            direction = -transform.right;
+            if (isThisFlipped) direction *= -1;
+            if (!isLeftTurn.Value && isTurned) direction *= -1;
+            return point.position + direction * offset;
         }
 
-        return isLeftTurn.HasValue ? 
-            isLeftTurn.Value ? rightTurnPerpendicularPosition : leftTurnPerpendicularPosition
-            : forwardPerpendicularPosition;
-
+        // Calculate the direction based on the backward state
+        direction = isBackward ? -transform.up : transform.up;
+        if (isThisFlipped) direction *= -1;
+        return point.position + direction * offset;
     }
 }
