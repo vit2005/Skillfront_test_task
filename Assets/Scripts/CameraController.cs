@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
-   
+
+    private bool _isLogging = false;
+
     void Start()
     {
         UnitSpawner.OnDominoesTilesPlaced += UnitSpawner_OnDominoesTilesPlaced;
@@ -25,7 +27,7 @@ public class CameraController : MonoBehaviour
             var v = new Vector3[4];
             image.rectTransform.GetWorldCorners(v);
 
-            // update min and max
+            // Update min and max
             foreach (var vector3 in v)
             {
                 min = Vector3.Min(min, vector3);
@@ -33,19 +35,30 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        // create the bounds
+        // Create the bounds
         var bounds = new Bounds();
         bounds.SetMinMax(min, max);
-        Debug.Log(bounds);
-        Vector2 XY = bounds.center;
+        if (_isLogging) Debug.Log(bounds);
 
+        // Get position of min and max on screen
+        Vector3 screenPositionMin = mainCamera.WorldToScreenPoint(min);
+        Vector3 screenPositionMax = mainCamera.WorldToScreenPoint(max);
+
+        if (_isLogging) Debug.Log($"ScreenPos: [{screenPositionMin}   {screenPositionMax}]");
+
+        Vector2 XY = bounds.center;
+        if (_isLogging) Debug.Log($"Screen: [{Screen.width}   {Screen.height}]");
         float Z = mainCamera.transform.position.z;
-        float w = bounds.extents.x / (Screen.width / 2);
-        float h = bounds.extents.y / (Screen.height / 2);
-        Debug.Log($"[{w}   {h}]");
+
+        // If images bound width and heigth larger than half of screen, camera will move backward a little bit
+        float w = (screenPositionMax.x - screenPositionMin.x) / (Screen.width / 2);
+        float h = (screenPositionMax.y - screenPositionMin.y) / (Screen.height / 2);
+        if (_isLogging) Debug.Log($"w,h: [{w}   {h}]");
         float maxK = Mathf.Max(w, h);
-        if (maxK > 0.5f)
-            Z -= (maxK - 0.5f)*100f;
+        if (maxK > 1f)
+            Z -= (maxK - 1f) * 500f;
+
+        if (_isLogging) Debug.Log($"maxK,z: [{maxK}     {Z}]");
         mainCamera.transform.position = new Vector3(XY.x, XY.y, Z);
     }
 }

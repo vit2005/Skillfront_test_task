@@ -138,7 +138,7 @@ public class GameState : MonoBehaviour
 
     private static float GetRandomNextPlayTime()
     {
-        return Time.time;// + Random.Range(0.5f, 3f);
+        return Time.time + Random.Range(0.5f, 3f);
     }
 
     private void OnDestroy()

@@ -13,11 +13,15 @@ public class UnitSpawner : MonoBehaviour
     // List of all created domino objects
     public List<Unit> units = new List<Unit>();
     public List<Image> unitsImages = new List<Image>();
+
     // The first and last domino in the chain
     private Unit _firstDomino;
     private Unit _lastDomino;
 
+    // Static event for camera refresh
     public static event Action<List<Image>> OnDominoesTilesPlaced;
+
+    private bool _isLogging = false;
 
     void Start()
     {
@@ -37,19 +41,20 @@ public class UnitSpawner : MonoBehaviour
     private void GameState_OnDominoesTilesChainUpdate(List<int[]> chain, int[] central)
     {
         // Log incoming data for debugging
-        LogIncomingArray(chain, central);
+        if (_isLogging) LogIncomingArray(chain, central);
 
         // Determine if the first domino should be used as the attachment point
         bool attachToFirst = chain.FirstOrDefault() != _firstDomino?.dots;
-        Debug.Log("useFirstDomino = " + attachToFirst);
+        if (_isLogging) Debug.Log("useFirstDomino = " + attachToFirst);
 
         // Select the unit to attach to (either the first or the last)
         Unit attachUnit = attachToFirst ? _firstDomino : _lastDomino;
         int[] newDominoDots = attachToFirst ? chain.First() : chain.Last();
-        Debug.Log($"new [{newDominoDots[0]}, {newDominoDots[1]}]");
+        if (_isLogging) Debug.Log($"new [{newDominoDots[0]}, {newDominoDots[1]}]");
 
         // Determine if a left turn is needed
-        bool? isTurnLeft = IsTurnLeft(chain, central, newDominoDots, attachToFirst, out bool isTurn, out bool shouldFlip);
+        // Variable isTurn returns null if it is not turn, true if it is odd turn and false if even
+        bool? isTurnLeft = IsTurnLeft(chain, central, newDominoDots, attachToFirst, out bool isTurn);
 
         // Instantiate the new domino and configure it
         Transform unitTransform = Instantiate(unitPrefab, initialPosition).transform;
@@ -69,9 +74,9 @@ public class UnitSpawner : MonoBehaviour
 
         // Determine the position and direction of the new domino
         unitTransform.position = attachUnit.GetNextDominoPosition(out Vector3 direction, newDominoDots[0] != newDominoDots[1], isTurnLeft, !attachToFirst);
-        Debug.Log(direction);
+        if (_isLogging) Debug.Log(direction);
 
-        // Set the domino's direction
+        // Rotate upside down if it is added to end of chain
         unitTransform.up = attachToFirst ? direction : -direction;
 
         // Add the domino to the beginning or end of the chain
@@ -96,7 +101,7 @@ public class UnitSpawner : MonoBehaviour
         _lastDomino = units.Last();
 
         // Log the current array state
-        LogCurrentArray();
+        if (_isLogging) LogCurrentArray();
 
         // Add new image to list to refresh camera
         unitsImages.Add(unit.Image);
@@ -111,21 +116,26 @@ public class UnitSpawner : MonoBehaviour
         _lastDomino = unit;
     }
 
-    private bool? IsTurnLeft(List<int[]> arg1, int[] arg2, int[] newArg, bool useFirstDomino, out bool isTurn, out bool shouldFlip)
+    private bool? IsTurnLeft(List<int[]> chain, int[] central, int[] newDots, bool useFirstDomino, out bool isTurn)
     {
-        shouldFlip = false;
-        int indexOfX = arg1.IndexOf(arg2);
-        List<int[]> listPart = useFirstDomino ? arg1.Take(indexOfX + 1).Reverse().ToList() : arg1.Skip(indexOfX).ToList();
-        int indexOfNewArg = listPart.IndexOf(newArg);
+        // Get index of central element of chain
+        int indexOfX = chain.IndexOf(central);
+
+        // Make list of first or last half of chain (list always starts from central element)
+        List<int[]> listPart = useFirstDomino ? chain.Take(indexOfX + 1).Reverse().ToList() : chain.Skip(indexOfX).ToList();
+
+        // Get index of new domino in new list
+        int indexOfNewArg = listPart.IndexOf(newDots);
+
+        // Get if element should turn depending on index
         isTurn = (indexOfNewArg + 4) % 7 == 1 || (indexOfNewArg + 4) % 7 == 2;
         bool? isTurnLeft = null;
         if (isTurn)
         {
+            // Get turn direction
             isTurnLeft = ((indexOfNewArg + 4) / 7) % 2 == 1;
-            //isTurnLeft = true;
-            //shouldFlip = !isTurnLeft.Value && ((indexOfNewArg + 4) % 7 == 0);
         }
-        Debug.Log("isTurnLeft = " + isTurnLeft);
+        if (_isLogging) Debug.Log("isTurnLeft = " + isTurnLeft);
         return isTurnLeft;
     }
 
